@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class BankCode(BaseModel):
@@ -39,6 +39,6 @@ class PayoutRequest(BaseModel):
     destination_details: DestinationDetailRequest
 
 class PayoutResponse(BaseModel):
-    requestId:str
+    requestId: str
     status: str
     initiatedAt: datetime

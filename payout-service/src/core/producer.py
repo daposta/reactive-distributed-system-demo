@@ -32,7 +32,7 @@ class MessageProducer:
         else:
             self.logger.info(f'✅ Delivered to {msg.topic()} [{msg.partition()}] at offset {msg.offset()}')
 
-    def send_payout(self, topic, request_id, payload):
+    async def send_payout(self, topic, request_id, payload):
         self.producer.produce(topic=topic, value=json.dumps(payload).encode("utf-8"), callback=self._delivery_report)
         self.producer.poll(0)
         return PayoutResponse(
