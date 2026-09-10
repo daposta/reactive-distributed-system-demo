@@ -1,0 +1,7 @@
+.venv
+.env
+__pycache__/
+.idea/
+/payout data
+payout-service/test_producer.py
+*/*.db
