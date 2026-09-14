@@ -16,6 +16,7 @@ class PayOutService:
         self.session = session
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.INFO)
+        self.topic = settings.PAYOUT_TOPIC
 
     def _generate_auth(self):
         credentials = f"{settings.TAZAPAY_API_KEY}:{settings.TAZAPAY_API_SECRET}"
@@ -23,22 +24,15 @@ class PayOutService:
         return f"Basic {encoded}"
 
     async def initiate_payout(self, payload) -> PayoutResponse:
-        topic = "payout_initiated"
         request_id = str(uuid.uuid4())
-        auth = None
         self.logger.info(f"Initiating payout")
         result =  await self.save({
             "reference_id": request_id,
             "status":"INITIATED",
         })
-        await message_producer.send_payout(topic, request_id, payload)
+        await message_producer.send_payout(self.topic, request_id, payload)
         self.logger.info(f"Payout message sent")
-        self.logger.info(result.reference_id, result.created_at, result.status)
-        return PayoutResponse(
-            requestId=result.reference_id,
-            status=result.status,
-            initiatedAt=result.created_at,
-        )
+        return result
 
     async def save(self, payload):
         new_payout = PayOut(**payload)
@@ -56,6 +50,9 @@ class PayOutService:
             self.session.close()
 
     async def get_by_id(self, request_id) -> PayoutResponse:
-        payout = (self.session.query(PayOut)
+        print("innie....")
+        statement = (self.session.query(PayOut)
                   .where(PayOut.reference_id == request_id))
+        payout = self.session.scalar(statement)
+        self.logger.info(f"Payout with {request_id} returned")
         return payout

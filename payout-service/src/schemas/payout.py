@@ -1,4 +1,6 @@
+
 from datetime import datetime
+from decimal import Decimal
 
 from pydantic import BaseModel, Field, ConfigDict
 
@@ -39,6 +41,12 @@ class PayoutRequest(BaseModel):
     destination_details: DestinationDetailRequest
 
 class PayoutResponse(BaseModel):
-    requestId: str
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+    requestId: str  = Field(alias="reference_id")
     status: str
-    initiatedAt: datetime
+    initiatedAt: datetime = Field(alias="created_at")
+    payment_service_id: str
+    currency_code: str
+    fx_rate: Decimal
+    base_amount: int
