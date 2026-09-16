@@ -3,7 +3,7 @@ import logging
 from datetime import datetime, timezone
 
 from confluent_kafka import Producer
-from ..schemas.payout import PayoutResponse
+from src.schemas.payout import PayoutResponse
 
 
 class MessageProducer:

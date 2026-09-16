@@ -3,9 +3,9 @@
 from fastapi import APIRouter, Response, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from ..schemas.payout import PayoutRequest, PayoutResponse
-from ..services.payout import PayOutService
-from ..core.database import get_session
+from src.schemas.payout import PayoutRequest, PayoutResponse
+from src.services.payout import PayOutService
+from src.core.database import get_session
 
 router = APIRouter(prefix="/payouts")
 

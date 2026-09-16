@@ -1,8 +1,9 @@
-from datetime import date
-
 from fastapi import FastAPI
-from pydantic import BaseModel
+
 from src.routes.payout import router as payout_router
+
+
+
 
 app = FastAPI(
     title="Payout Service API",
@@ -11,3 +12,9 @@ app = FastAPI(
 
 
 app.include_router(payout_router)
+
+@app.get("/health")
+async def health():
+    return {
+        "status": "ok"
+    }

@@ -5,11 +5,11 @@ import uuid
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from ..core.producer import  message_producer
-from ..models.payout import PayOut
-from ..core.database import  get_session
-from ..core.settings import  settings
-from ..schemas.payout import PayoutResponse
+from src.core.producer import  message_producer
+from src.models.payout import PayOut
+# from ..core.database import  get_session
+from src.core.settings import  settings
+from src.schemas.payout import PayoutResponse
 
 class PayOutService:
     def __init__(self, session:Session):
@@ -30,6 +30,7 @@ class PayOutService:
             "reference_id": request_id,
             "status":"INITIATED",
         })
+        payload["reference_id"] = request_id
         await message_producer.send_payout(self.topic, request_id, payload)
         self.logger.info(f"Payout message sent")
         return result

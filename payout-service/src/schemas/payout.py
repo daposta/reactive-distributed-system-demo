@@ -6,17 +6,18 @@ from pydantic import BaseModel, Field, ConfigDict
 
 
 class BankCode(BaseModel):
-    ifsc_code: str
+    swift_code: str
+    aba_code: str
 
 class BankRequest(BaseModel):
-    bank_code: BankCode
+    bank_codes: BankCode
     account_number: str
     bank_name: str
     country: str
     currency: str
 
 class DestinationDetailRequest(BaseModel):
-    destination_type: str
+    type: str
     bank: BankRequest
 
 
@@ -46,7 +47,7 @@ class PayoutResponse(BaseModel):
     requestId: str  = Field(alias="reference_id")
     status: str
     initiatedAt: datetime = Field(alias="created_at")
-    payment_service_id: str
-    currency_code: str
-    fx_rate: Decimal
-    base_amount: int
+    # payment_service_id: str
+    # currency_code: str
+    # fx_rate: Decimal
+    # base_amount: int
