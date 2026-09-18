@@ -51,7 +51,6 @@ class PayOutService:
             self.session.close()
 
     async def get_by_id(self, request_id) -> PayoutResponse:
-        print("innie....")
         statement = (self.session.query(PayOut)
                   .where(PayOut.reference_id == request_id))
         payout = self.session.scalar(statement)

@@ -5,32 +5,39 @@ from decimal import Decimal
 from pydantic import BaseModel, Field, ConfigDict
 
 
-class BankCode(BaseModel):
-    ifsc_code: str
+class EventBankCode(BaseModel):
+    swift_code: str
+    aba_code: str
 
-class Bank(BaseModel):
-    bank_code: BankCode
+class EventBank(BaseModel):
+    bank_codes: EventBankCode
     account_number: str
     bank_name: str
     country: str
     currency: str
+    branch_name:str
 
-class DestinationDetail(BaseModel):
-    destination_type: str
-    bank: Bank
+class EventDestinationDetail(BaseModel):
+    destination_type: str = Field(alias="type")
+    bank: EventBank
+
+    model_config = {
+        "populate_by_name": True
+    }
 
 
-class Address(BaseModel):
+class EventAddress(BaseModel):
     line1: str
     city: str
     state: str
     country: str
     postal_code: str
 
-class BeneficiaryDetails(BaseModel):
+class EventBeneficiaryDetails(BaseModel):
     name: str
     type: str
-    address: Address
+    address: EventAddress
+
 
 class PayoutEvent(BaseModel):
     reference_id: str
@@ -38,8 +45,9 @@ class PayoutEvent(BaseModel):
     currency: str = Field(..., min_length=3, max_length=3)
     purpose: str = Field(..., min_length=3, )
     transaction_description: str = Field(..., min_length=3, )
-    beneficiary_details: BeneficiaryDetails
-    destination_details: DestinationDetail
+    beneficiary_details: EventBeneficiaryDetails
+    destination_details: EventDestinationDetail
+
 
 # class PayoutResponse(BaseModel):
 #     model_config = ConfigDict(from_attributes=True, populate_by_name=True)

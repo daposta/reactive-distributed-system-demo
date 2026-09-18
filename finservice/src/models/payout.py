@@ -5,8 +5,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from src.core.database import Base
 
-class PayOut(Base):
-    __tablename__ = "payouts"
+class PayoutStatus(Base):
+    __tablename__ = "payouts_status"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     reference_id: Mapped[str]

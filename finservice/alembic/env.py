@@ -5,8 +5,8 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from src.core.settings import settings
 from src.core.database import Base
+from src.core.settings import settings
 from src.models.payout import *
 
 # this is the Alembic Config object, which provides

@@ -15,6 +15,7 @@ class BankRequest(BaseModel):
     bank_name: str
     country: str
     currency: str
+    branch_name: str
 
 class DestinationDetailRequest(BaseModel):
     type: str
