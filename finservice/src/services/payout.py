@@ -21,6 +21,11 @@ class PayoutService:
         logger.info(f"Payout with {ref_id} returned")
         return payout
 
+    async def find_by_tazapay_id(self, tazapay_id):
+        statement =  self.session.query(PayoutStatus).where(PayoutStatus.payment_service_id == tazapay_id)
+        payout = self.session.scalar(statement)
+        logger.info(f"Payout with {tazapay_id} returned")
+        return payout
 
     async def save(self, reference_id,  response:TazapayServiceResponse):
         data = response.data

@@ -6,7 +6,7 @@ from fastapi import FastAPI
 
 from src.core.payout_consumer import PayoutConsumer
 
-
+from src.core.webhook_consumer import WebhookConsumer
 
 logging.basicConfig(
     level=logging.INFO,
@@ -19,23 +19,43 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     payout_consumer = PayoutConsumer()
-    consumer_task = asyncio.create_task(
-        payout_consumer.start()
+    webhook_consumer = WebhookConsumer()
+
+    payout_task = asyncio.create_task(
+        payout_consumer.start(),
+        name = "payout-consumer",
+    )
+    webhook_task = asyncio.create_task(
+        webhook_consumer.start(),
+        name="webhook-consumer",
     )
     app.state.payout_consumer = payout_consumer
-    app.state.consumer_task = consumer_task
+    app.state.webhook_consumer = webhook_consumer
+
+    app.state.payout_task = payout_task
+    app.state.webhook_task = webhook_task
 
     logger.info(f"Application started..")
+    logger.info("Payout consumer started")
+    logger.info("Webhook consumer started")
+
     try:
         yield
     finally:
         logger.info("Application shutting down...")
         payout_consumer.stop()
-        consumer_task.cancel()
-        try:
-            await consumer_task
-        except asyncio.CancelledError:
-            pass
+        webhook_consumer.stop()
+
+        for task in (payout_task, webhook_task):
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
+            except Exception:
+                logger.exception(
+                    "Consumer task failed during shutdown: %s",
+                    task.get_name(),
+                )
 
 
 

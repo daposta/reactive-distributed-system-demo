@@ -11,11 +11,12 @@ from src.models.payout import PayOut
 from src.core.settings import  settings
 from src.schemas.payout import PayoutResponse
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+
 class PayOutService:
     def __init__(self, session:Session):
         self.session = session
-        self.logger = logging.getLogger(__name__)
-        logging.basicConfig(level=logging.INFO)
         self.topic = settings.PAYOUT_TOPIC
 
     def _generate_auth(self):
@@ -25,14 +26,14 @@ class PayOutService:
 
     async def initiate_payout(self, payload) -> PayoutResponse:
         request_id = str(uuid.uuid4())
-        self.logger.info(f"Initiating payout")
+        logger.info(f"Initiating payout")
         result =  await self.save({
             "reference_id": request_id,
             "status":"INITIATED",
         })
         payload["reference_id"] = request_id
-        await message_producer.send_payout(self.topic, request_id, payload)
-        self.logger.info(f"Payout message sent")
+        await message_producer.send(self.topic, request_id, payload)
+        logger.info(f"Payout message sent")
         return result
 
     async def save(self, payload):
@@ -41,11 +42,11 @@ class PayOutService:
         try:
             self.session.commit()
             self.session.refresh(new_payout)
-            self.logger.info(f"Payout saved successfully")
+            logger.info(f"Payout saved successfully")
             return new_payout
         except Exception as e:
             self.session.rollback()
-            self.logger.error(f"Payout save error: {e.args}")
+            logger.error(f"Payout save error: {e.args}")
             raise e
         finally:
             self.session.close()
@@ -54,5 +55,5 @@ class PayOutService:
         statement = (self.session.query(PayOut)
                   .where(PayOut.reference_id == request_id))
         payout = self.session.scalar(statement)
-        self.logger.info(f"Payout with {request_id} returned")
+        logger.info(f"Payout with {request_id} returned")
         return payout

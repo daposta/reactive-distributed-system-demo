@@ -10,6 +10,7 @@ class BaseSettings(BaseSettings):
     # TAZAPAY_API_KEY: str
     # TAZAPAY_API_SECRET: str
     PAYOUT_TOPIC: str
+    WEBHOOK_TOPIC: str
 
     model_config = {"env_file":".env", "extra": "ignore",}
 

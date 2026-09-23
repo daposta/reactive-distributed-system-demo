@@ -48,7 +48,3 @@ class PayoutResponse(BaseModel):
     requestId: str  = Field(alias="reference_id")
     status: str
     initiatedAt: datetime = Field(alias="created_at")
-    # payment_service_id: str
-    # currency_code: str
-    # fx_rate: Decimal
-    # base_amount: int

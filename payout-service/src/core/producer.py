@@ -32,12 +32,11 @@ class MessageProducer:
         else:
             self.logger.info(f'✅ Delivered to {msg.topic()} [{msg.partition()}] at offset {msg.offset()}')
 
-    async def send_payout(self, topic, request_id, payload):
+
+    async def send(self, topic:str, key:str, payload) -> None :
+
         self.producer.produce(topic=topic, value=json.dumps(payload).encode("utf-8"), callback=self._delivery_report)
         self.producer.poll(0)
-        return PayoutResponse(
-            requestId=str(request_id), status="PENDING", initiatedAt=datetime.now(timezone.utc)
-        )
 
 
 message_producer = MessageProducer()
