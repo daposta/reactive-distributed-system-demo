@@ -40,7 +40,8 @@ class EventBeneficiaryDetails(BaseModel):
 
 
 class PayoutEvent(BaseModel):
-    reference_id: str
+    # reference_id: str
+    requestId: str
     amount: float = Field(..., gt=0)
     currency: str = Field(..., min_length=3, max_length=3)
     purpose: str = Field(..., min_length=3, )

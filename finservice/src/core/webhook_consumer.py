@@ -75,6 +75,7 @@ class WebhookConsumer:
                 payout = await  payout_service.find_by_tazapay_id(payout_id)
                 if not payout:
                     logger.warn(f"No payout found for tazapay id: {payout_id}")
+                    return
                 payout.status = status.upper()
                 await payout_service.update(payout)
                 session.commit()

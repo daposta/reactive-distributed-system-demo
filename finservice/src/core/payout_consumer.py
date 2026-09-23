@@ -39,10 +39,11 @@ class PayoutConsumer:
         try:
             logger.info(f"Received payout initiated event: {message}")
             event_data = json.loads(message.value().decode('utf-8'))
-            reference_id = event_data["reference_id"]
+            reference_id = event_data["requestId"]
             payout_event = PayoutEvent.model_validate(event_data)
             payload = TazapayServiceRequest(
-                reference_id=payout_event.reference_id,
+                requestId=payout_event.requestId,
+                reference_id= payout_event.requestId,
                 amount=payout_event.amount,
                 currency=payout_event.currency,
                 purpose=payout_event.purpose,
@@ -93,7 +94,7 @@ class PayoutConsumer:
 
 
     async def process_payout(self, event):
-        reference_id = event.reference_id
+        reference_id = event.requestId
         logger.info(
             f"Processing payout for : {reference_id}"
         )
@@ -120,6 +121,7 @@ class PayoutConsumer:
                 if message.error():
                     logger.error(f"Kafka consumer error: {message.error()}")
                     continue
+                print(f"message -> {message}")
                 await self.handle_initiated_payout(message)
 
         except asyncio.CancelledError:

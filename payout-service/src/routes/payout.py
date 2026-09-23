@@ -15,8 +15,8 @@ async def make_payout(
         session: Session = Depends(get_session),
 ):
     payout_service = PayOutService(session)
-    data = payload.model_dump()
-    result = await payout_service.initiate_payout(data)
+    # data = payload.model_dump()
+    result = await payout_service.initiate_payout(payload)
     return result
 
 

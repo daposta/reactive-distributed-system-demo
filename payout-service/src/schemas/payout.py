@@ -35,6 +35,7 @@ class BeneficiaryDetails(BaseModel):
     address: Address
 
 class PayoutRequest(BaseModel):
+    requestId: str
     amount: float = Field(..., gt=0)
     currency: str = Field(..., min_length=3, max_length=3)
     purpose: str = Field(..., min_length=3, )

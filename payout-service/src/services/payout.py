@@ -9,7 +9,7 @@ from src.core.producer import  message_producer
 from src.models.payout import PayOut
 # from ..core.database import  get_session
 from src.core.settings import  settings
-from src.schemas.payout import PayoutResponse
+from src.schemas.payout import PayoutResponse, PayoutRequest
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -24,14 +24,15 @@ class PayOutService:
         encoded = (base64.encode(credentials.encode())).decode()
         return f"Basic {encoded}"
 
-    async def initiate_payout(self, payload) -> PayoutResponse:
-        request_id = str(uuid.uuid4())
+    async def initiate_payout(self, payload: PayoutRequest) -> PayoutResponse:
+        print(f"Payload = {payload}")
+        request_id = payload.requestId
         logger.info(f"Initiating payout")
         result =  await self.save({
             "reference_id": request_id,
             "status":"INITIATED",
         })
-        payload["reference_id"] = request_id
+        payload = payload.model_dump()
         await message_producer.send(self.topic, request_id, payload)
         logger.info(f"Payout message sent")
         return result

@@ -22,11 +22,11 @@ class TazapayService:
 
     async def run_payout(self, payload:dict) ->TazapayServiceResponse:
         logger.info("Initiating Tazapay payment request")
-        logger.debug(f"Tazapay payment payload: {payload}")
         request_data = payload.model_dump(
             by_alias=True,
             exclude_none=True,
         )
+
 
         logger.info(
             "Tazapay request payload: %s",
@@ -38,12 +38,16 @@ class TazapayService:
                     by_alias=True,
                     exclude_none=True,
                 )
+                request_data["reference_id"] = request_data["requestId"]
 
                 logger.info(
                     "Tazapay request payload: %s",
                     request_data,
                 )
-                async with session.post(self.api_url,json=payload.model_dump(by_alias=True, exclude_none=True)) as response:
+                headers = {
+                    "Idempotency-Key": request_data["requestId"],
+                }
+                async with session.post(self.api_url,json=request_data, headers=headers) as response:
                     logger.info(f"Tazapay payment response received. Status: {response.status}" )
                     response_data = await response.json()
                     if response.status >= 400:

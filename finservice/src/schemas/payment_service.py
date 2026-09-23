@@ -41,6 +41,7 @@ class TazapayBeneficiaryDetails(BaseModel):
 
 
 class TazapayServiceRequest(BaseModel):
+    requestId: str
     reference_id: str
     amount: float = Field(..., gt=0)
     currency: str = Field(..., min_length=3, max_length=3)
@@ -70,8 +71,6 @@ class TazapayPayoutData(BaseModel):
     balance_transaction: str
     beneficiary: str
     beneficiary_details: TazapayBeneficiaryDetails
-    # destination_details: TazapayDestinationDetail
-    # bank: TazapayBank
     payout_fx_transaction: PayoutFXTransactionResponse
 
 class TazapayServiceResponse(BaseModel):
