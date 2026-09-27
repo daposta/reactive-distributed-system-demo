@@ -12,6 +12,8 @@ from src.models.payout import PayOut
 from src.core.settings import  settings
 from src.schemas.payout import PayoutResponse, PayoutRequest, PayoutOutboxRequest
 from src.services.outbox import PayoutOutboxService
+from src.core.tasks.payout import publish_outbox
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
@@ -40,6 +42,7 @@ class PayOutService:
         )
 
         # await payout_producer.send(self.topic, request_id, payload)
+        publish_outbox..delay()
         logger.info(f"Payout message sent")
         return result
 

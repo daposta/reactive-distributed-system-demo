@@ -5,3 +5,6 @@ __pycache__/
 /payout data
 payout-service/test_producer.py
 */*.db
+payout-service/celerybeat-schedule-shm
+payout-service/celerybeat-schedule-wal
+payout-service/celerybeat-schedule

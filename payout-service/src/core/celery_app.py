@@ -16,4 +16,10 @@ celery.conf.update(
     imports=(
         "src.core.tasks.payout",
     ),
+    beat_schedule={
+            "dispatch-outbox-every-5-seconds": {
+                "task": "src.core.tasks.payout.publish_outbox",
+                "schedule": 5.0,
+            },
+        },
 )

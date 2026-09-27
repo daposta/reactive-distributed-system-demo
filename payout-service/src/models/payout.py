@@ -28,3 +28,7 @@ class PayoutOutbox(Base):
     payload: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=True)
     status:  Mapped[str] = mapped_column(String(3), index=True, default="PENDING") #new/set/error
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, index=True)
+    processed_at: Mapped[datetime | None] = mapped_column(
+        DateTime,
+        nullable=True,
+    )

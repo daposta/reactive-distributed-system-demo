@@ -35,13 +35,32 @@ class PayoutOutboxService:
             return inbox_data
 
 
-    async def update(self, outbox: dict, **fields):
-        for field, value in fields.items():
-            setattr(outbox, field, value)
-
+    def update(self, inbox_id: int, **fields):
         logger.info(
-            "Payout outbox: reference_id=%s",
-            outbox.payout_reference_id,
+            "Updating payout outbox: id=%s",
+            inbox_id,
         )
+        with get_db_session() as session:
+            outbox =  (session.get(PayoutOutbox, inbox_id))
+
+            if outbox is None:
+                raise ValueError(
+                    f"Payout outbox for  {inbox_id} not found"
+                )
+
+            logger.info(
+                "Updating payout outbox: id=%s reference_id=%s",
+                outbox.id,
+                outbox.payout_reference_id,
+            )
+            for field, value in fields.items():
+                setattr(outbox, field, value)
+
+            session.commit()
+            session.refresh(outbox)
+            logger.info(
+                "Payout outbox: reference_id=%s",
+                outbox.payout_reference_id,
+            )
 
         return outbox
