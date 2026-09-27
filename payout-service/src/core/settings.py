@@ -6,11 +6,10 @@ from pydantic_settings import BaseSettings
 
 class BaseSettings(BaseSettings):
     DATABASE_URL: str
-    # TAZAPAY_PAYOUT_ENDPOINT:str
-    # TAZAPAY_API_KEY: str
-    # TAZAPAY_API_SECRET: str
     PAYOUT_TOPIC: str
     WEBHOOK_TOPIC: str
+    BROKER_URL: str
+    BACKEND_URL: str
 
     model_config = {"env_file":".env", "extra": "ignore",}
 

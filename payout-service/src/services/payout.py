@@ -2,15 +2,16 @@ import base64
 import logging
 import uuid
 
+from alembic.util import status
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from src.core.producer import  message_producer
+from src.core.payout_producer import  payout_producer
 from src.models.payout import PayOut
 # from ..core.database import  get_session
 from src.core.settings import  settings
-from src.schemas.payout import PayoutResponse, PayoutRequest
-
+from src.schemas.payout import PayoutResponse, PayoutRequest, PayoutOutboxRequest
+from src.services.outbox import PayoutOutboxService
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
@@ -25,15 +26,20 @@ class PayOutService:
         return f"Basic {encoded}"
 
     async def initiate_payout(self, payload: PayoutRequest) -> PayoutResponse:
-        print(f"Payload = {payload}")
         request_id = payload.requestId
         logger.info(f"Initiating payout")
         result =  await self.save({
             "reference_id": request_id,
             "status":"INITIATED",
         })
-        payload = payload.model_dump()
-        await message_producer.send(self.topic, request_id, payload)
+
+        payload = payload.model_dump(mode="json")
+
+        await PayoutOutboxService().create(
+            PayoutOutboxRequest(payout_reference_id=request_id, payload=payload, status="NEW", event_type="payout_initiated")
+        )
+
+        # await payout_producer.send(self.topic, request_id, payload)
         logger.info(f"Payout message sent")
         return result
 

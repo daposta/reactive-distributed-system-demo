@@ -1,8 +1,9 @@
 
 from datetime import datetime
 from decimal import Decimal
+from typing import Dict, Any
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, Json
 
 
 class BankCode(BaseModel):
@@ -49,3 +50,10 @@ class PayoutResponse(BaseModel):
     requestId: str  = Field(alias="reference_id")
     status: str
     initiatedAt: datetime = Field(alias="created_at")
+
+
+class PayoutOutboxRequest(BaseModel):
+    payout_reference_id: str
+    event_type:str
+    payload: dict[str, Any]
+    status: str

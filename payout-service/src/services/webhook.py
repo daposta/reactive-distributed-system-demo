@@ -2,7 +2,7 @@ import logging
 
 from src.core.settings import settings
 from src.schemas.webhook import TazapayWebhook
-from src.core.producer import  message_producer
+from src.core.payout_producer import  payout_producer
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +12,6 @@ class WebhookService:
 
     async def handle_tazapay_webhook(self, payload: TazapayWebhook):
         try:
-            # webhook_event = TazapayWebhook.model_validate(payload)
 
             data = payload.data
             payout_id = data.id

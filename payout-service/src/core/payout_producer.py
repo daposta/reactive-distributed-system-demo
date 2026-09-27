@@ -6,7 +6,7 @@ from confluent_kafka import Producer
 from src.schemas.payout import  PayoutRequest
 
 
-class MessageProducer:
+class PayoutProducer:
     def __init__(self):
         self.conf = {
             "bootstrap.servers": "127.0.0.1:29092",
@@ -33,9 +33,9 @@ class MessageProducer:
             self.logger.info(f'✅ Delivered to {msg.topic()} [{msg.partition()}] at offset {msg.offset()}')
 
 
-    async def send(self, topic:str, key:str, payload:dict) -> None :
+    def send(self, topic:str, key:str, payload:dict) -> None :
         self.producer.produce(topic=topic, key=key,  value=json.dumps(payload).encode("utf-8"), callback=self._delivery_report)
         self.producer.poll(0)
 
 
-message_producer = MessageProducer()
+payout_producer = PayoutProducer()

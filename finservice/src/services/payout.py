@@ -33,7 +33,7 @@ class PayoutService:
         currency = data.currency
         payout_status = PayoutStatus(
             reference_id=reference_id,
-            status=PaymentStatus.PROCESSING.value,
+            status=PaymentStatus.PENDING.value,
             payment_service_id=service_id
         )
 
